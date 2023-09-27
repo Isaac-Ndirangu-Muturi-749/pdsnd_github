@@ -1,12 +1,14 @@
+
 import pandas as pd
 from datetime import datetime
 
+# Define a dictionary for city data
 CITY_DATA = {'chicago': 'chicago.csv', 'new york city': 'new_york_city.csv', 'washington': 'washington.csv'}
 
 def load_data(city, month, day):
     try:
         # Load data file into a dataframe
-        df = pd.read_csv(CITY_DATA[city])
+        df = pd.read_csv(CITY_DATA.get(city.lower()))
 
         # Convert the Start Time column to datetime
         df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -17,19 +19,30 @@ def load_data(city, month, day):
 
         # Filter by month if applicable
         if month.lower() != 'all':
-            months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
-            month = months.index(month.lower()) + 1
-            df = df[df['month'] == month]
+            # Define a list of valid months
+            valid_months = ['january', 'february', 'march', 'april', 'may', 'june']
+            if month.lower() in valid_months:
+                month = valid_months.index(month.lower()) + 1
+                df = df[df['month'] == month]
+            else:
+                print("Invalid month. Please enter a valid month or 'all' for all months.")
+                return None
 
-        # Filter by day of week if applicable
+        # Filter by day of the week if applicable
         if day.lower() != 'all':
-            df = df[df['day_of_week'] == day.title()]
+            # Check if the entered day is valid
+            if day.title() in df['day_of_week'].unique():
+                df = df[df['day_of_week'] == day.title()]
+            else:
+                print("Invalid day. Please enter a valid day or 'all' for all days.")
+                return None
 
         return df
 
     except FileNotFoundError:
         print("File not found for the selected city. Please check the file name.")
         return None
+
 
 def calculate_statistics(df):
     # Calculate the average trip duration in seconds
