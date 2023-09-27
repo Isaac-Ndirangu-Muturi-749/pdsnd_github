@@ -76,7 +76,17 @@ def calculate_statistics(df):
     # Count the number of unique starting stations
     unique_starting_stations = df['Start Station'].nunique()
 
-    return {"\nAverage trip duration (in minutes)": round(avg_trip_duration_minutes, 2), "\nMost popular start station": most_popular_start_station, "\nMost popular end station": most_popular_end_station, "\nTotal travel time (in minutes)": round(total_travel_time_minutes, 2), "\nMedian age of users": int(median_age) if 'Birth Year' in df.columns else None, "\nAverage age of users": round(average_age, 2) if 'Birth Year' in df.columns else None, "\nMost popular day of the week for bike rentals": most_popular_day, "\nLongest trip duration recorded (in minutes)": round(longest_trip_duration_minutes, 2), "\nNumber of unique starting stations": unique_starting_stations}
+    return {
+        "\nAverage trip duration (in minutes)": round(avg_trip_duration_minutes, 2),
+        "\nMost popular start station": most_popular_start_station,
+        "\nMost popular end station": most_popular_end_station,
+        "\nTotal travel time (in minutes)": round(total_travel_time_minutes, 2),
+        "\nMedian age of users": int(median_age) if 'Birth Year' in df.columns else None,
+        "\nAverage age of users": round(average_age, 2) if 'Birth Year' in df.columns else None,
+        "\nMost popular day of the week for bike rentals": most_popular_day,
+        "\nLongest trip duration recorded (in minutes)": round(longest_trip_duration_minutes, 2),
+        "\nNumber of unique starting stations": unique_starting_stations
+    }
 
 def display_raw_data(df):
     start_idx = 0
