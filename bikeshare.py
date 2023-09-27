@@ -17,19 +17,25 @@ def load_data(city, month, day):
 
         # Filter by month if applicable
         if month.lower() != 'all':
+            # Define a list of months for indexing
             months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+            # Convert the input month to its corresponding index
             month = months.index(month.lower()) + 1
+            # Filter the dataframe by the selected month
             df = df[df['month'] == month]
 
-        # Filter by day of week if applicable
+        # Filter by day of the week if applicable
         if day.lower() != 'all':
+            # Filter the dataframe by the selected day
             df = df[df['day_of_week'] == day.title()]
 
         return df
 
     except FileNotFoundError:
+        # Handle the case where the data file is not found
         print("File not found for the selected city. Please check the file name.")
         return None
+
 
 def calculate_statistics(df):
     # Calculate the average trip duration in seconds
