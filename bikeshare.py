@@ -1,12 +1,14 @@
+
 import pandas as pd
 from datetime import datetime
 
+# Define a dictionary for city data
 CITY_DATA = {'chicago': 'chicago.csv', 'new york city': 'new_york_city.csv', 'washington': 'washington.csv'}
 
 def load_data(city, month, day):
     try:
         # Load data file into a dataframe
-        df = pd.read_csv(CITY_DATA[city])
+        df = pd.read_csv(CITY_DATA.get(city.lower()))
 
         # Convert the Start Time column to datetime
         df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -17,22 +19,27 @@ def load_data(city, month, day):
 
         # Filter by month if applicable
         if month.lower() != 'all':
-            # Define a list of months for indexing
-            months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
-            # Convert the input month to its corresponding index
-            month = months.index(month.lower()) + 1
-            # Filter the dataframe by the selected month
-            df = df[df['month'] == month]
+            # Define a list of valid months
+            valid_months = ['january', 'february', 'march', 'april', 'may', 'june']
+            if month.lower() in valid_months:
+                month = valid_months.index(month.lower()) + 1
+                df = df[df['month'] == month]
+            else:
+                print("Invalid month. Please enter a valid month or 'all' for all months.")
+                return None
 
         # Filter by day of the week if applicable
         if day.lower() != 'all':
-            # Filter the dataframe by the selected day
-            df = df[df['day_of_week'] == day.title()]
+            # Check if the entered day is valid
+            if day.title() in df['day_of_week'].unique():
+                df = df[df['day_of_week'] == day.title()]
+            else:
+                print("Invalid day. Please enter a valid day or 'all' for all days.")
+                return None
 
         return df
 
     except FileNotFoundError:
-        # Handle the case where the data file is not found
         print("File not found for the selected city. Please check the file name.")
         return None
 
@@ -69,7 +76,17 @@ def calculate_statistics(df):
     # Count the number of unique starting stations
     unique_starting_stations = df['Start Station'].nunique()
 
-    return {"\nAverage trip duration (in minutes)": round(avg_trip_duration_minutes, 2), "\nMost popular start station": most_popular_start_station, "\nMost popular end station": most_popular_end_station, "\nTotal travel time (in minutes)": round(total_travel_time_minutes, 2), "\nMedian age of users": int(median_age) if 'Birth Year' in df.columns else None, "\nAverage age of users": round(average_age, 2) if 'Birth Year' in df.columns else None, "\nMost popular day of the week for bike rentals": most_popular_day, "\nLongest trip duration recorded (in minutes)": round(longest_trip_duration_minutes, 2), "\nNumber of unique starting stations": unique_starting_stations}
+    return {
+        "\nAverage trip duration (in minutes)": round(avg_trip_duration_minutes, 2),
+        "\nMost popular start station": most_popular_start_station,
+        "\nMost popular end station": most_popular_end_station,
+        "\nTotal travel time (in minutes)": round(total_travel_time_minutes, 2),
+        "\nMedian age of users": int(median_age) if 'Birth Year' in df.columns else None,
+        "\nAverage age of users": round(average_age, 2) if 'Birth Year' in df.columns else None,
+        "\nMost popular day of the week for bike rentals": most_popular_day,
+        "\nLongest trip duration recorded (in minutes)": round(longest_trip_duration_minutes, 2),
+        "\nNumber of unique starting stations": unique_starting_stations
+    }
 
 def display_raw_data(df):
     start_idx = 0
